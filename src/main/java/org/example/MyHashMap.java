@@ -85,9 +85,7 @@ public class MyHashMap<K, V> {
             currentNode = currentNode.next;
         }
 
-        // Если мы здесь, значит, узла с null-ключом не было.
-        // Создаем новый и добавляем его в НАЧАЛО цепочки в 0-м ящике.
-        // Это проще, чем добавлять в конец.
+        // Создаем новый и добавляем его в начало цепочки в 0-м ящике.
         Node<K, V> newNode = new Node<>(null, value, table[0]);
         table[0] = newNode;
         size++; // Не забываем увеличить размер
@@ -100,7 +98,7 @@ public class MyHashMap<K, V> {
             Node<K, V> currentNode = table[0];
             while (currentNode != null) {
                 if (currentNode.key == null) {
-                    return currentNode.value; // Нашли -> вернули значение
+                    return currentNode.value; // Нашли и вернули значение
                 }
                 currentNode = currentNode.next;
             }
@@ -195,22 +193,22 @@ public class MyHashMap<K, V> {
     }
 
     private void resize() {
-        // 1. Сохраняем старый массив и создаем новый, вдвое больше
+        // Сохраняем старый массив и создаем новый, вдвое больше
         Node<K, V>[] oldTable = table;
         int newCapacity = oldTable.length * 2;
         table = (Node<K, V>[]) new Node[newCapacity];
 
-        // 2. Проходим по КАЖДОМУ ящику СТАРОГО массива
+        // Проходим по каждому ящику старого массива
         for (Node<K, V> nodeInOldBucket : oldTable) {
             // Берем первый узел из цепочки в старом ящике
             Node<K, V> currentNode = nodeInOldBucket;
 
-            // 3. Если в ящике есть цепочка, проходим по ней
+            // Если в ящике есть цепочка, проходим по ней
             while (currentNode != null) {
-                // Важно! Сохраняем ссылку на следующий узел, т.к. мы сейчас "оборвем" связь
+                // Сохраняем ссылку на следующий узел, т.к. мы сейчас "оборвем" связь
                 Node<K, V> nextNode = currentNode.next;
 
-                // 4. Вычисляем НОВЫЙ индекс для текущего узла в НОВОМ массиве
+                // Вычисляем новый индекс для текущего узла в новом массиве
                 int newIndex;
                 if (currentNode.key == null) {
                     newIndex = 0;
@@ -218,14 +216,12 @@ public class MyHashMap<K, V> {
                     newIndex = currentNode.key.hashCode() & (newCapacity - 1);
                 }
 
-                // 5. Вставляем текущий узел в НАЧАЛО цепочки в новом ящике
-                // Это самый простой и эффективный способ.
                 // Ставим `next` нашего узла на то, что уже было в новом ящике.
                 currentNode.next = table[newIndex];
                 // А "головой" цепочки в новом ящике делаем наш узел.
                 table[newIndex] = currentNode;
 
-                // Переходим к следующему узлу из СТАРОЙ цепочки
+                // Переходим к следующему узлу из старой цепочки
                 currentNode = nextNode;
             }
         }
